@@ -10,22 +10,35 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os
+import environ
+
+root = environ.Path(__file__) - 2
+
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, '30)n56i@)o7i+i&fl&c$=41kunl)12!$j2ugdvgqmk%7dem3*2'),
+    ALLOWED_HOSTS=(list, []),
+    DATABASE_URL=(str, 'psql://tutorial:hbb2ufb=Ty_RJ*dC@localhost/tutorial'),
+    MEDIA_URL=(str, '/media/'),
+    STATIC_URL=(str, '/static/'),
+)
+
+environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = root()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '30)n56i@)o7i+i&fl&c$=41kunl)12!$j2ugdvgqmk%7dem3*2'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -54,7 +67,7 @@ ROOT_URLCONF = 'api_tutorial.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [root.path('templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -75,10 +88,7 @@ WSGI_APPLICATION = 'api_tutorial.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': env.db()
 }
 
 
@@ -118,4 +128,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+public_root = root.path('public/')
+
+STATIC_ROOT = public_root('static')
+STATIC_URL = env('STATIC_URL')
