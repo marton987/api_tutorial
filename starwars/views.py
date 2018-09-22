@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
 
 from starwars.models import Hero, Film, Species, Vehicle, Starship, People, Planet
 from starwars.serializers import HeroSerializer, FilmSerializer, SpeciesSerializer, VehicleSerializer,\
@@ -27,21 +27,26 @@ class VehicleViewSet(viewsets.ModelViewSet):
     serializer_class = VehicleSerializer
     queryset = Vehicle.objects.all()
     permission_classes = (permissions.AllowAny,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)
 
 
 class SpeciesViewSet(viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     permission_classes = (permissions.AllowAny,)
+    filter_fields = ('homeworld',)
 
 
 class FilmViewSet(viewsets.ModelViewSet):
     serializer_class = FilmSerializer
     queryset = Film.objects.all()
     permission_classes = (permissions.AllowAny,)
+    filter_fields = ('episode_id',)
 
 
 class HeroViewSet(viewsets.ModelViewSet):
     serializer_class = HeroSerializer
     queryset = Hero.objects.all()
     permission_classes = (permissions.AllowAny,)
+    filter_fields = ('homeworld',)
